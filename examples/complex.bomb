@@ -1,0 +1,43 @@
+//Complex example with multiple features
+//Fibonacci with memoization-like approach
+~fibonacci-n_*n&<=&1:if_!return-n_*n&-&1@prev1*n&-&2@prev2!fibonacci-prev1@fib1!fibonacci-prev2@fib2*fib1&+&fib2@result!return-result__
+
+//Math utilities that call each other
+~isEven-num_*num&%&2&==&0@check!return-check_
+~isOdd-num_!isEven-num@evencheck*evencheck&==&0@oddcheck!return-oddcheck_
+
+//Complex calculation with error handling
+~complexCalc-a-b-c_
+  ^mathError_
+    *a&*&b&+&c@step1
+    *step1&>&1000:if_!explode-"mathError"-"Result too large!"_
+    *step1&/&a@step2
+    !fibonacci-5@fibval
+    *step2&+&fibval@final
+    !return-final
+  _^mathError_
+    !alert-"💥 Math explosion! Returning safe value."
+    !return-0
+  _
+
+//Test the complex function
+*12@x
+*8@y  
+*5@z
+!complexCalc-x-y-z@complexResult
+!alert-"Complex calculation result:"-complexResult
+
+//Test with values that trigger error
+*50@bigx
+*30@bigy
+*100@bigz
+!complexCalc-bigx-bigy-bigz@errorResult
+!alert-"Error case result:"-errorResult
+
+//Demonstrate chained comparisons
+*15@testval
+*testval&>&10&==&1:if_
+  !alert-"Value is greater than 10"
+_:else_
+  !alert-"Value is not greater than 10"  
+_

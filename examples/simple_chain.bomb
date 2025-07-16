@@ -1,0 +1,5 @@
+//Very simple chain test  
+*3@x
+*1@y  
+*x&<=&y@result
+!alert-"Result should be 0:"-result

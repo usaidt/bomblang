@@ -1,0 +1,6 @@
+//Simple factorial test
+~factorial-n_*n&<=&1:if_!return-1_*n&-&1@prev!factorial-prev@prevfact*n&*&prevfact@result!return-result_
+
+*3@test
+!factorial-test@result  
+!alert-"Factorial of 3 is"-result

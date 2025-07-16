@@ -1,0 +1,18 @@
+//Error handling with labeled try-catch blocks
+~safeDivide-a-b_*b&==&0:if_!explode-"divzero"-"Cannot divide by zero!"_!return-0_*a&/&b@result!return-result_
+
+//Test safe division with error handling
+*10@numerator
+*0@denominator
+
+^divzero_!safeDivide-numerator-denominator@result!alert-"Division result:"-result_^divzero_!alert-"💥 Division explosion caught and defused!"_
+
+//Test with valid division
+*15@newnum
+*3@newdenom
+^divzero_!safeDivide-newnum-newdenom@validresult!alert-"Valid division:"-validresult_^divzero_!alert-"This should not print"_
+
+//Nested error handling
+~riskyOperation-val_*val&>&100:if_!explode-"toobig"-"Value too dangerous!"_!return-val_
+
+^toobig_^overflow_!riskyOperation-150@result_^overflow_!alert-"Overflow handled"_^toobig_!alert-"Big value explosion defused!"_

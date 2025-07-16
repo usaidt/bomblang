@@ -1,0 +1,8 @@
+//Test chain evaluation
+*3@x
+*x&<=&1@result
+!alert-"3 <= 1 ="-result
+
+*1@y  
+*y&<=&1@result2
+!alert-"1 <= 1 ="-result2

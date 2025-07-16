@@ -1,0 +1,15 @@
+//Recursive factorial function  
+~factorial-n_*n&<=&1:if_!return-1_:else_*n&-&1@prev!factorial-prev@prevfact*n&*&prevfact@result!return-result__
+
+//Test factorial with different values
+*5@input
+!factorial-input@result
+!alert-"Factorial of"-input-"is"-result
+
+*0@zero
+!factorial-zero@zerofact
+!alert-"Factorial of"-zero-"is"-zerofact
+
+*10@ten
+!factorial-ten@bigfact
+!alert-"Factorial of"-ten-"is"-bigfact

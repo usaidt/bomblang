@@ -1,0 +1,6 @@
+//Debug factorial
+~factorial-n_*n&<=&1:if_!alert-"Base case: n ="-n!return-1_:else_!alert-"Recursive case: n ="-n!return-99__
+
+*3@test
+!factorial-test@result
+!alert-"Result:"-result

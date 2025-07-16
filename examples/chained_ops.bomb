@@ -1,0 +1,13 @@
+//Basic arithmetic with chained operations
+*5@x
+*3@y
+*x&+&y&*&2&+&1@result
+!alert-"Result:"-result
+
+//Function that calls another function
+~double-n_*n&*&2@doubled!return-doubled_
+~quadruple-n_!double-n@temp!double-temp@quad!return-quad_
+
+*7@num
+!quadruple-num@final
+!alert-"Quadruple of"-num-"is"-final

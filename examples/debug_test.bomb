@@ -1,0 +1,7 @@
+//Debug step by step
+~double-n_*n&*&2@doubled!return-doubled_
+
+*7@num
+!alert-"Testing with num:"-num
+!double-num@result
+!alert-"Double result:"-result

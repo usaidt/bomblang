@@ -128,7 +128,7 @@ export class Lexer {
     const startColumn = this.column - 2; // Account for '//'
     const startPosition = this.position - 2; // Start of '//'
     
-    while (this.peek() !== '\n' && !this.isAtEnd()) {
+    while (!this.isAtEnd() && this.current() !== '\n') {
       this.advance();
     }
     
@@ -144,8 +144,9 @@ export class Lexer {
     const startColumn = this.column;
     this.advance(); // Consume opening "
     const start = this.position;
-    while (this.peek() !== '"' && !this.isAtEnd()) {
-      if (this.peek() === '\n') {
+    
+    while (!this.isAtEnd() && this.current() !== '"') {
+      if (this.current() === '\n') {
         this.line++;
         this.column = 1;
       }
@@ -164,7 +165,7 @@ export class Lexer {
   private number(): Token {
     const start = this.position;
     this.advance(); // Consume the first digit
-    while (this.isDigit(this.peek())) {
+    while (!this.isAtEnd() && this.isDigit(this.current())) {
       this.advance();
     }
     const value = this.input.substring(start, this.position);
@@ -174,7 +175,7 @@ export class Lexer {
   private identifier(): Token {
     const start = this.position;
     this.advance(); // Consume the first character
-    while (this.isAlphaNumeric(this.peek())) {
+    while (!this.isAtEnd() && this.isAlphaNumeric(this.current())) {
       this.advance();
     }
     const value = this.input.substring(start, this.position);
@@ -226,8 +227,8 @@ export class Lexer {
   }
 
   private skipWhitespace(): void {
-    while (true) {
-      const char = this.peek();
+    while (!this.isAtEnd()) {
+      const char = this.current();
       switch (char) {
         case ' ':
         case '\r':
