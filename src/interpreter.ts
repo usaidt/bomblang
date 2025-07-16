@@ -148,7 +148,7 @@ export class Interpreter implements ASTVisitor<any> {
 
   visitAlertStmt(stmt: AlertStmt): any {
     const messages = stmt.args.map(arg => String(arg.accept(this)));
-    console.log(messages.join(''));
+    console.log(messages.join(' '));
   }
 
   visitIfStmt(stmt: IfStmt): any {

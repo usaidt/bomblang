@@ -4,7 +4,7 @@
 
 **bombLang** is an esoteric programming language built on explosive metaphors. Variables are bombs, functions are fuses, and calls are detonations. It focuses on minimal syntax, symbolic operations, and playful semantics. 
 
-**CRITICAL RULE: NO WHITESPACE ALLOWED** (except inside string literals). Any space, tab, carriage return, or newline characters outside of strings will cause a lexical error. This makes bombLang extremely compact and forces precise syntax. Code flows continuously like brainfuck.
+**WHITESPACE RULE: ALL WHITESPACE IS IGNORED** (except inside string literals). Any space, tab, carriage return, or newline characters outside of strings will be silently ignored, making bombLang extremely compact while allowing flexible formatting.
 
 ---
 
@@ -13,10 +13,10 @@
 | Concept        | Syntax Example              | Description                                                 |
 | -------------- | --------------------------- | ----------------------------------------------------------- |
 | Variable       | `*5@x`                      | Creates a bomb (value 5) named `x`                          |
-| Arithmetic     | `*x&+y&@z`                  | Chains operations: value of x + value of y → z              |
+| Arithmetic     | `*x&+&y@z`                  | Chains operations: value of x + value of y → z              |
 | Function       | `~add-x-y_...code..._`      | Declares function `add` with parameters `x` and `y`         |
 | Function Call  | `!add-x-y@sum`              | Calls function `add` with args `x` and `y`, result in `sum` |
-| Conditional    | `*x&>5&:if_...code..._:else_...code..._`  | Conditional blocks based on preceding expression |
+| Conditional    | `*x&>&5:if_...code..._:else_...code..._`  | Conditional blocks based on preceding expression |
 | Error Handling | `^label_...try..._^label_...catch..._`    | Try block, with matching catch block        |
 | Return         | `!return-val`               | Returns value from a function                               |
 | Output         | `!alert-x-"msg"-y`          | Prints concatenated values/strings                          |
@@ -37,24 +37,24 @@
 
 ```bomb
 *5@x           // Assign literal 5 to variable x
-*x&+3&@y       // y = x + 3 (value of x, then literal 3)
+*x&+&3@y       // y = x + 3 (value of x, then literal 3)
 ```
 
 #### 🔁 Arithmetic Chains
 
 ```bomb
-*x&+y&@z       // z = x + y (value of x + value of y)
-*z&*2&+3&@w    // w = z * 2 + 3 (value of z * literal 2 + literal 3)
+*x&+&y@z       // z = x + y (value of x + value of y)
+*z&*&2&+&3@w   // w = z * 2 + 3 (value of z * literal 2 + literal 3)
 ```
 
-**Pattern**: `*` starts expression, `&` separates values/operations, literals come after `&`
+**Pattern**: `*` starts expression, `&` separates values/operations, `&` separates operators from values
 Supported operators: `+`, `-`, `*`, `/`, `%`, `==`, `!=`, `>`, `<`, `>=`, `<=`
 
 #### 🔩 Fuse (Function) Definition
 
 ```bomb
-~add-x-y_*x&+y&@result!return-result_
-~multiply-a-b-c_*a&*b&*c&@result!return-result_
+~add-x-y_*x&+&y@result!return-result_
+~multiply-a-b-c_*a&*&b&*&c@result!return-result_
 ```
 
 **Pattern**: `~name-param1-param2-..._code_`
@@ -71,7 +71,7 @@ Supported operators: `+`, `-`, `*`, `/`, `%`, `==`, `!=`, `>`, `<`, `>=`, `<=`
 #### ⏳ Conditionals
 
 ```bomb
-*z&>10&:if_!alert-"Toopowerful!"_:else_!alert-"Safe."_
+*z&>&10:if_!alert-"Toopowerful!"_:else_!alert-"Safe."_
 ```
 
 **Pattern**: Expression followed by `:if_code_:else_code_` (else is optional)
@@ -79,7 +79,7 @@ Supported operators: `+`, `-`, `*`, `/`, `%`, `==`, `!=`, `>`, `<`, `>=`, `<=`
 #### 🧯 Error Handling
 
 ```bomb
-^explode_*0&/0&@div_^explode_!alert-"Explosiondefused!"_
+^explode_*0&/&0@div_^explode_!alert-"Explosiondefused!"_
 ```
 
 **Pattern**: `^label_trycode_^label_catchcode_`
@@ -99,14 +99,14 @@ Supported operators: `+`, `-`, `*`, `/`, `%`, `==`, `!=`, `>`, `<`, `>=`, `<=`
 
 ```bomb
 //Multiplytwovauesandreportiftheresultistoobig
-*5@x*7@y~multiply-a-b_*a&*b&@result!return-result_!multiply-x-y@z*z&>30&:if_!alert-"Bigboom!"_:else_!alert-"Controlleddemotion."_
+*5@x*7@y~multiply-a-b_*a&*&b@result!return-result_!multiply-x-y@z*z&>&30:if_!alert-"Bigboom!"_:else_!alert-"Controlleddemotion."_
 ```
 
 **Breaking it down:**
 - `*5@x*7@y` - Set x=5, y=7
-- `~multiply-a-b_*a&*b&@result!return-result_` - Define multiply function
+- `~multiply-a-b_*a&*&b@result!return-result_` - Define multiply function
 - `!multiply-x-y@z` - Call multiply with x,y store in z
-- `*z&>30&:if_...` - If z > 30 then print "Bigboom!" else "Controlleddemotion."
+- `*z&>&30:if_...` - If z > 30 then print "Bigboom!" else "Controlleddemotion."
 
 ---
 

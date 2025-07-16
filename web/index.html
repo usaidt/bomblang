@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💣 BombLang REPL - The Explosive Programming Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Enhanced animations and effects */
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 20px #ff6b35;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .exploding {
+            animation: explode 0.3s ease-in-out;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .example-category {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .example-btn-small {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .example-btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .live-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .demo-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .execution-output {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            white-space: pre-wrap;
+            min-height: 40px;
+            color: #00ff88;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+            color: #ff6b35;
+        }
+
+        .feature-highlight {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 20px;">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="/" style="color: #ff6b35; text-decoration: none; font-weight: bold; font-size: 1.1rem;">
+                    <i class="fas fa-bomb"></i> BombLang REPL
+                </a>
+                <a href="docs.html"
+                    style="color: #667eea; text-decoration: none; padding: 8px 16px; border: 1px solid #667eea; border-radius: 6px; transition: all 0.3s ease;">
+                    <i class="fas fa-book"></i> Documentation
+                </a>
+            </div>
+            <div>
+                <a href="https://github.com/usaidt/bomblang" target="_blank"
+                    style="color: #fff; text-decoration: none; padding: 8px 16px; background: linear-gradient(45deg, #333, #555); border-radius: 6px; transition: all 0.3s ease;">
+                    <i class="fab fa-github"></i> GitHub Repository
+                </a>
+            </div>
+        </nav>
+
+        <header>
+            <h1>💣 BombLang REPL</h1>
+            <p>The Most Explosive Programming Language Experience on the Web!</p>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="tokens-processed">0</span>
+                    <span>Tokens Detonated</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="examples-run">0</span>
+                    <span>Examples Exploded</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="errors-caught">0</span>
+                    <span>Explosions Contained</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="feature-highlight">
+            <i class="fas fa-rocket"></i> Now with Live Execution! Run code directly in your browser
+            <i class="fas fa-fire"></i>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="live-demo">
+                    <h3><i class="fas fa-play-circle"></i> Quick Demo</h3>
+                    <p>Try these instant demos:</p>
+                    <div class="demo-controls">
+                        <button class="demo-btn" onclick="runQuickDemo('hello')">
+                            <i class="fas fa-comment"></i> Hello World
+                        </button>
+                        <button class="demo-btn" onclick="runQuickDemo('math')">
+                            <i class="fas fa-calculator"></i> Math Explosion
+                        </button>
+                        <button class="demo-btn" onclick="runQuickDemo('chain')">
+                            <i class="fas fa-link"></i> Chain Reaction
+                        </button>
+                    </div>
+                    <div id="demo-output" class="execution-output">Ready to explode! 💥</div>
+                </div>
+
+                <div class="examples-section">
+                    <h3>💥 Example Arsenal</h3>
+
+                    <div class="example-category">
+                        <div class="category-title"><i class="fas fa-baby"></i> Beginner Bombs</div>
+                        <div class="example-grid">
+                            <button class="example-btn-small" data-example="simple">Simple Variables</button>
+                            <button class="example-btn-small" data-example="strings">String Literals</button>
+                            <button class="example-btn-small" data-example="operators">Basic Math</button>
+                            <button class="example-btn-small" data-example="alerts">Alert Messages</button>
+                        </div>
+                    </div>
+
+                    <div class="example-category">
+                        <div class="category-title"><i class="fas fa-cog"></i> Intermediate Explosives</div>
+                        <div class="example-grid">
+                            <button class="example-btn-small" data-example="functions">Function Definition</button>
+                            <button class="example-btn-small" data-example="conditionals">If-Else Logic</button>
+                            <button class="example-btn-small" data-example="comparisons">Comparisons</button>
+                            <button class="example-btn-small" data-example="chained">Chained Operations</button>
+                        </div>
+                    </div>
+
+                    <div class="example-category">
+                        <div class="category-title"><i class="fas fa-bomb"></i> Advanced Detonation</div>
+                        <div class="example-grid">
+                            <button class="example-btn-small" data-example="recursion">Recursive Factorial</button>
+                            <button class="example-btn-small" data-example="fibonacci">Fibonacci Sequence</button>
+                            <button class="example-btn-small" data-example="errors">Error Handling</button>
+                            <button class="example-btn-small" data-example="complex">Complex Calculator</button>
+                        </div>
+                    </div>
+
+                    <div class="example-category">
+                        <div class="category-title"><i class="fas fa-flask"></i> Experimental Bombs</div>
+                        <div class="example-grid">
+                            <button class="example-btn-small" data-example="nested">Nested Functions</button>
+                            <button class="example-btn-small" data-example="memoization">Memoization Pattern</button>
+                            <button class="example-btn-small" data-example="validators">Input Validation</button>
+                            <button class="example-btn-small" data-example="utilities">Math Utilities</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="token-guide">
+                    <h3>🔥 Explosive Syntax Guide</h3>
+                    <div class="token-list">
+                        <div class="token-item">
+                            <span class="token-symbol">*</span>
+                            <span class="token-desc">Variable Declaration (Asterisk)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">@</span>
+                            <span class="token-desc">Variable Assignment (At Symbol)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">&</span>
+                            <span class="token-desc">Expression Separator (Ampersand)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">!</span>
+                            <span class="token-desc">Function Call/Alert (Bang)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">~</span>
+                            <span class="token-desc">Function Definition (Tilde)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">:if_</span>
+                            <span class="token-desc">Conditional If Statement</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">:else_</span>
+                            <span class="token-desc">Conditional Else Statement</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">^label_</span>
+                            <span class="token-desc">Try-Catch Block</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">+, -, *, /, %</span>
+                            <span class="token-desc">Arithmetic Operators</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">==, !=, >, <,>=, <=< /span>
+                                        <span class="token-desc">Comparison Operators</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">_</span>
+                            <span class="token-desc">Block Delimiter (Underscore)</span>
+                        </div>
+                        <div class="token-item">
+                            <span class="token-symbol">-</span>
+                            <span class="token-desc">Parameter Separator (Dash)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="input-section">
+                    <label for="code-input">
+                        <i class="fas fa-code"></i> Enter BombLang Code:
+                        <span style="float: right; font-size: 0.8em; color: #aaa;">
+                            Ctrl+Enter to execute
+                        </span>
+                    </label>
+                    <textarea id="code-input"
+                        placeholder="// Welcome to BombLang! 💣&#10;// Try: *5 @x&#10;// or: !alert &quot;Hello Explosive World!&quot;&#10;// or load an example from the left panel&#10;&#10;// Write your explosive code here..."></textarea>
+                    <div class="button-group">
+                        <button id="tokenize-btn" class="primary-btn">
+                            <i class="fas fa-fire"></i> Tokenize & Execute
+                        </button>
+                        <button id="run-btn" class="primary-btn"
+                            style="background: linear-gradient(45deg, #28a745, #20c997);">
+                            <i class="fas fa-play"></i> Run Code
+                        </button>
+                        <button id="clear-btn" class="secondary-btn">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <h3><i class="fas fa-terminal"></i> Execution Output</h3>
+                    <div id="execution-output" class="output-container"
+                        style="background: #1e1e1e; color: #00ff00; font-family: 'JetBrains Mono', 'Courier New', monospace;">
+                        Ready for explosive code! 💣
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <h3><i class="fas fa-list"></i> Token Analysis</h3>
+                    <div id="output" class="output-container"></div>
+                </div>
+
+                <div class="error-section" id="error-section" style="display: none;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Explosion Report</h3>
+                    <div id="error-output" class="error-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3><i class="fas fa-flask"></i> Test Laboratory</h3>
+            <div style="margin-bottom: 15px;">
+                <button id="run-tests-btn" class="test-btn">
+                    <i class="fas fa-vial"></i> Run All Tests
+                </button>
+                <button id="run-examples-btn" class="test-btn"
+                    style="background: linear-gradient(45deg, #17a2b8, #138496);">
+                    <i class="fas fa-rocket"></i> Test All Examples
+                </button>
+            </div>
+            <div id="test-results" class="test-results"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="bundle.js"></script>
+
+    <script>
+        // Quick demo functions
+        window.runQuickDemo = function (type) {
+            const demos = {
+                hello: '*"Hello Explosive World!" @msg\n!alert msg',
+                math: '*10 @x\n*5 @y\n*x & * & y @result\n!alert "Result:" result',
+                chain: '*3 @a\n*a & + & 2 & * & 5 @result\n!alert "Chained math:" result'
+            };
+
+            document.getElementById('code-input').value = demos[type];
+            document.getElementById('demo-output').textContent = `Loaded ${type} demo - click "Run Code" to explode! 💥`;
+        };
+
+        // Statistics tracking
+        let stats = {
+            tokensProcessed: 0,
+            examplesRun: 0,
+            errorsCaught: 0
+        };
+
+        function updateStats() {
+            document.getElementById('tokens-processed').textContent = stats.tokensProcessed;
+            document.getElementById('examples-run').textContent = stats.examplesRun;
+            document.getElementById('errors-caught').textContent = stats.errorsCaught;
+        }
+
+        // Update stats periodically
+        setInterval(updateStats, 1000);
+    </script>
+</body>
+
+</html>

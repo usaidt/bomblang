@@ -100,21 +100,20 @@ export class Parser {
   private functionCall(): ASTNode {
     if (this.check(TokenType.Alert)) {
       this.advance(); // consume 'alert'
-      const args = this.parseArgumentList();
+      const args = this.parseAlertArguments();
       return new AlertStmt(args);
     }
     
     if (this.check(TokenType.Return)) {
       this.advance(); // consume 'return'
-      this.consume(TokenType.Dash, "Expected '-' after 'return'");
       const value = this.expression();
       return new ReturnStmt(value);
     }
     
-    // Regular function call: !funcname-arg1-arg2@result
+    // Regular function call: !funcname-arg1-arg2@result OR !funcname arg1 arg2@result
     if (this.check(TokenType.Identifier)) {
       const name = this.advance().value;
-      const args = this.parseArgumentList();
+      const args = this.parseFunctionArguments();
       
       let resultVar: string | undefined;
       if (this.match(TokenType.At)) {
@@ -133,6 +132,24 @@ export class Parser {
     const args: ASTNode[] = [];
     
     while (this.match(TokenType.Dash)) {
+      args.push(this.primary());
+    }
+    
+    return args;
+  }
+
+  // Parse arguments for alert statements (no dashes required)
+  private parseAlertArguments(): ASTNode[] {
+    const args: ASTNode[] = [];
+    
+    // Parse all following expressions until we hit a statement boundary
+    while (!this.isAtEnd() && 
+           !this.check(TokenType.Bang) && 
+           !this.check(TokenType.Asterisk) && 
+           !this.check(TokenType.Tilde) && 
+           !this.check(TokenType.Caret) && 
+           !this.check(TokenType.Colon) &&
+           !this.check(TokenType.Underscore)) {
       args.push(this.primary());
     }
     
@@ -249,6 +266,32 @@ export class Parser {
            this.check(TokenType.GreaterEqual) ||
            this.check(TokenType.Less) ||
            this.check(TokenType.LessEqual);
+  }
+
+  // Parse arguments for function calls (supports both -arg1-arg2 and arg1 arg2 styles)
+  private parseFunctionArguments(): ASTNode[] {
+    const args: ASTNode[] = [];
+    
+    // Check if we're using dash-separated style (-arg1-arg2)
+    if (this.check(TokenType.Dash)) {
+      while (this.match(TokenType.Dash)) {
+        args.push(this.primary());
+      }
+    } else {
+      // Use space-separated style (arg1 arg2) - parse until @ or statement boundary
+      while (!this.isAtEnd() && 
+             !this.check(TokenType.At) &&
+             !this.check(TokenType.Bang) && 
+             !this.check(TokenType.Asterisk) && 
+             !this.check(TokenType.Tilde) && 
+             !this.check(TokenType.Caret) && 
+             !this.check(TokenType.Colon) &&
+             !this.check(TokenType.Underscore)) {
+        args.push(this.primary());
+      }
+    }
+    
+    return args;
   }
 
   // Utility methods

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💣 BombLang Documentation - The Explosive Language Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        .docs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .docs-content {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            line-height: 1.8;
+        }
+
+        .docs-content h1 {
+            color: #ff6b35;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #667eea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .docs-content h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .docs-content h3 {
+            color: #f7931e;
+            font-size: 1.4rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .docs-content p {
+            color: #e2e8f0;
+            margin-bottom: 15px;
+        }
+
+        .docs-content code {
+            background: rgba(0, 0, 0, 0.6);
+            color: #ff6b35;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        .docs-content pre {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .docs-content pre code {
+            background: none;
+            color: #00ff88;
+            padding: 0;
+        }
+
+        .syntax-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .syntax-table th {
+            background: rgba(102, 126, 234, 0.3);
+            color: #fff;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .syntax-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        .syntax-table td:first-child {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .example-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-box h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .toc {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toc h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .toc a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .nav-style {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .nav-style a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-style a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="docs-container">
+        <!-- Navigation -->
+        <nav class="nav-style">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="index.html" style="color: #ff6b35; font-weight: bold; font-size: 1.1rem;">
+                    <i class="fas fa-bomb"></i> Back to REPL
+                </a>
+            </div>
+            <div>
+                <a href="https://github.com/usaidt/bomblang" target="_blank"
+                    style="background: linear-gradient(45deg, #333, #555);">
+                    <i class="fab fa-github"></i> GitHub Repository
+                </a>
+            </div>
+        </nav>
+
+        <div class="docs-content">
+            <h1>💣 BombLang Documentation</h1>
+            <p style="text-align: center; font-size: 1.2rem; color: #cbd5e0; margin-bottom: 40px;">
+                The explosive programming language that makes coding go BOOM! 🚀
+            </p>
+
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3><i class="fas fa-list"></i> Table of Contents</h3>
+                <ul>
+                    <li><a href="#introduction">Introduction</a></li>
+                    <li><a href="#syntax-overview">Syntax Overview</a></li>
+                    <li><a href="#variables">Variables</a></li>
+                    <li><a href="#operators">Operators</a></li>
+                    <li><a href="#functions">Functions</a></li>
+                    <li><a href="#conditionals">Conditionals</a></li>
+                    <li><a href="#error-handling">Error Handling</a></li>
+                    <li><a href="#examples">Examples</a></li>
+                    <li><a href="#advanced">Advanced Features</a></li>
+                </ul>
+            </div>
+
+            <h2 id="introduction"><i class="fas fa-rocket"></i> Introduction</h2>
+            <p>
+                BombLang is an esoteric programming language built around explosive metaphors. Every operation is
+                designed to feel like you're
+                detonating code rather than just running it. The language uses unique symbolic syntax that makes
+                programming feel like
+                defusing (or setting off) bombs!
+            </p>
+
+            <h2 id="syntax-overview"><i class="fas fa-cogs"></i> Syntax Overview</h2>
+            <p>BombLang uses a unique set of symbols for different operations. Here's the complete syntax reference:</p>
+
+            <table class="syntax-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Purpose</th>
+                        <th>Description</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>*</td>
+                        <td>Variable Declaration</td>
+                        <td>Creates a new variable or assigns a value</td>
+                        <td><code>*5 @x</code></td>
+                    </tr>
+                    <tr>
+                        <td>@</td>
+                        <td>Assignment</td>
+                        <td>Assigns a value to a variable</td>
+                        <td><code>*10 @myVar</code></td>
+                    </tr>
+                    <tr>
+                        <td>&</td>
+                        <td>Expression Separator</td>
+                        <td>Separates parts of expressions</td>
+                        <td><code>*x & + & y @sum</code></td>
+                    </tr>
+                    <tr>
+                        <td>!</td>
+                        <td>Function Call/Alert</td>
+                        <td>Calls functions or displays alerts</td>
+                        <td><code>!alert "Hello!"</code></td>
+                    </tr>
+                    <tr>
+                        <td>~</td>
+                        <td>Function Definition</td>
+                        <td>Defines a new function</td>
+                        <td><code>~myFunc-param_code_</code></td>
+                    </tr>
+                    <tr>
+                        <td>_</td>
+                        <td>Block Delimiter</td>
+                        <td>Marks the end of code blocks</td>
+                        <td><code>~func_code_</code></td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>Parameter Separator</td>
+                        <td>Separates function parameters</td>
+                        <td><code>~add-a-b_code_</code></td>
+                    </tr>
+                    <tr>
+                        <td>:if_</td>
+                        <td>If Statement</td>
+                        <td>Conditional execution</td>
+                        <td><code>*x & > & 5:if_code_</code></td>
+                    </tr>
+                    <tr>
+                        <td>:else_</td>
+                        <td>Else Statement</td>
+                        <td>Alternative execution</td>
+                        <td><code>:else_code_</code></td>
+                    </tr>
+                    <tr>
+                        <td>^label_</td>
+                        <td>Try-Catch Block</td>
+                        <td>Error handling</td>
+                        <td><code>^error_code_^error_handler_</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="variables"><i class="fas fa-cube"></i> Variables</h2>
+            <p>Variables in BombLang are declared using the asterisk (*) symbol followed by a value and assignment (@):
+            </p>
+
+            <div class="example-box">
+                <h4>Basic Variable Declaration</h4>
+                <pre><code>// Declare a number variable
+*42 @answer
+
+// Declare a string variable
+*"Hello World" @greeting
+
+// Declare multiple variables
+*10 @x
+*20 @y
+*x & + & y @sum</code></pre>
+            </div>
+
+            <h3>Variable Types</h3>
+            <p>BombLang supports several data types:</p>
+            <ul style="color: #e2e8f0; padding-left: 20px;">
+                <li><strong>Numbers:</strong> <code>*42 @num</code></li>
+                <li><strong>Strings:</strong> <code>*"text" @str</code></li>
+                <li><strong>Booleans:</strong> Result of comparisons</li>
+            </ul>
+
+            <h2 id="operators"><i class="fas fa-calculator"></i> Operators</h2>
+            <p>BombLang supports various operators for mathematical and logical operations:</p>
+
+            <h3>Arithmetic Operators</h3>
+            <table class="syntax-table">
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Operation</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>+</td>
+                        <td>Addition</td>
+                        <td><code>*x & + & y @sum</code></td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>Subtraction</td>
+                        <td><code>*x & - & y @diff</code></td>
+                    </tr>
+                    <tr>
+                        <td>*</td>
+                        <td>Multiplication</td>
+                        <td><code>*x & * & y @product</code></td>
+                    </tr>
+                    <tr>
+                        <td>/</td>
+                        <td>Division</td>
+                        <td><code>*x & / & y @quotient</code></td>
+                    </tr>
+                    <tr>
+                        <td>%</td>
+                        <td>Modulo</td>
+                        <td><code>*x & % & y @remainder</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Comparison Operators</h3>
+            <table class="syntax-table">
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Operation</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>==</td>
+                        <td>Equal to</td>
+                        <td><code>*x & == & 5 @isEqual</code></td>
+                    </tr>
+                    <tr>
+                        <td>!=</td>
+                        <td>Not equal to</td>
+                        <td><code>*x & != & 0 @notZero</code></td>
+                    </tr>
+                    <tr>
+                        <td>></td>
+                        <td>Greater than</td>
+                        <td><code>*x & > & 10 @isGreater</code></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            << /td>
+                        <td>Less than</td>
+                        <td><code>*x & < & 5 @isLess</code></td>
+                    </tr>
+                    <tr>
+                        <td>>=</td>
+                        <td>Greater than or equal</td>
+                        <td><code>*x & >= & 0 @isPositive</code></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <=< /td>
+                        <td>Less than or equal</td>
+                        <td><code>*x & <= & 100 @inRange</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="functions"><i class="fas fa-code"></i> Functions</h2>
+            <p>Functions in BombLang are defined using the tilde (~) symbol and can take parameters:</p>
+
+            <div class="example-box">
+                <h4>Function Definition</h4>
+                <pre><code>// Simple function without parameters
+~sayHello_!alert "Hello from BombLang!"_
+
+// Function with parameters
+~double-n_*n & * & 2 @result !return result_
+
+// Function with multiple parameters
+~add-a-b_*a & + & b @sum !return sum_
+
+// Calling functions
+!sayHello
+*5 @num
+!double num @doubled
+!alert "Doubled:" doubled</code></pre>
+            </div>
+
+            <h3>Function Return Values</h3>
+            <p>Functions can return values using the <code>!return</code> statement:</p>
+            <pre><code>~multiply-x-y_
+  *x & * & y @product
+  !return product
+_
+
+*6 @a
+*7 @b
+!multiply a b @result
+!alert "6 * 7 =" result</code></pre>
+
+            <h2 id="conditionals"><i class="fas fa-code-branch"></i> Conditionals</h2>
+            <p>BombLang supports if-else statements for conditional execution:</p>
+
+            <div class="example-box">
+                <h4>If-Else Statements</h4>
+                <pre><code>// Simple if statement
+*age @userAge
+*userAge & >= & 18:if_
+  !alert "You are an adult!"
+_
+
+// If-else statement
+*score @testScore
+*testScore & >= & 60:if_
+  !alert "You passed!"
+_:else_
+  !alert "You failed!"
+_
+
+// Nested conditionals
+*temperature @temp
+*temp & > & 30:if_
+  !alert "It's hot!"
+_:else_
+  *temp & < & 10:if_
+    !alert "It's cold!"
+  _:else_
+    !alert "It's mild!"
+  _
+_</code></pre>
+            </div>
+
+            <h2 id="error-handling"><i class="fas fa-exclamation-triangle"></i> Error Handling</h2>
+            <p>BombLang provides try-catch blocks for error handling using the ^ symbol:</p>
+
+            <div class="example-box">
+                <h4>Error Handling</h4>
+                <pre><code>// Function that might throw an error
+~safeDivide-a-b_
+  *b & == & 0:if_
+    !explode "divisionError" "Cannot divide by zero!"
+  _
+  *a & / & b @result
+  !return result
+_
+
+// Try-catch block
+*10 @numerator
+*0 @denominator
+
+^divisionError_
+  !safeDivide numerator denominator @result
+  !alert "Result:" result
+_^divisionError_
+  !alert "Error caught: Division by zero!"
+_</code></pre>
+            </div>
+
+            <h2 id="examples"><i class="fas fa-lightbulb"></i> Examples</h2>
+
+            <h3>Factorial Function</h3>
+            <div class="example-box">
+                <pre><code>~factorial-n_
+  *n & <= & 1:if_
+    !return 1
+  _
+  *n & - & 1 @prev
+  !factorial prev @prevFact
+  *n & * & prevFact @result
+  !return result
+_
+
+*5 @number
+!factorial number @fact
+!alert "Factorial of 5 is" fact</code></pre>
+            </div>
+
+            <h3>Fibonacci Sequence</h3>
+            <div class="example-box">
+                <pre><code>~fibonacci-n_
+  *n & <= & 1:if_
+    !return n
+  _
+  *n & - & 1 @n1
+  *n & - & 2 @n2
+  !fibonacci n1 @fib1
+  !fibonacci n2 @fib2
+  *fib1 & + & fib2 @result
+  !return result
+_
+
+*8 @fibNumber
+!fibonacci fibNumber @fibResult
+!alert "Fibonacci of 8 is" fibResult</code></pre>
+            </div>
+
+            <h3>Input Validation</h3>
+            <div class="example-box">
+                <pre><code>~validateAge-age_
+  *age & < & 0:if_
+    !alert "Age cannot be negative"
+    !return 0
+  _
+  *age & > & 150:if_
+    !alert "Age seems unrealistic"
+    !return 0
+  _
+  !alert "Valid age:" age
+  !return 1
+_
+
+*25 @userAge
+!validateAge userAge @isValid</code></pre>
+            </div>
+
+            <h2 id="advanced"><i class="fas fa-graduation-cap"></i> Advanced Features</h2>
+
+            <h3>Chained Operations</h3>
+            <p>You can chain multiple operations together:</p>
+            <pre><code>*5 @x
+*x & + & 3 & * & 2 & - & 1 @result
+!alert "Result:" result  // Result: 15</code></pre>
+
+            <h3>Function Composition</h3>
+            <p>Functions can call other functions to create complex behavior:</p>
+            <pre><code>~double-n_*n & * & 2 @doubled !return doubled_
+~quadruple-n_!double n @temp !double temp @quad !return quad_
+
+*5 @num
+!quadruple num @result
+!alert "Quadruple of 5 is" result</code></pre>
+
+            <h3>Recursive Functions</h3>
+            <p>BombLang supports recursion for complex algorithms:</p>
+            <pre><code>~countdown-n_
+  !alert "Countdown:" n
+  *n & > & 0:if_
+    *n & - & 1 @next
+    !countdown next
+  _:else_
+    !alert "BOOM! 💥"
+  _
+_
+
+*5 @start
+!countdown start</code></pre>
+
+            <div
+                style="margin-top: 60px; padding: 30px; background: linear-gradient(45deg, #ff6b35, #f7931e); border-radius: 15px; text-align: center;">
+                <h3 style="color: white; margin-bottom: 20px;">Ready to Start Bombing? 💣</h3>
+                <p style="color: white; margin-bottom: 20px;">
+                    Head back to the REPL and start experimenting with BombLang!
+                </p>
+                <a href="index.html"
+                    style="color: white; background: rgba(0,0,0,0.3); padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+                    <i class="fas fa-bomb"></i> Launch REPL
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
