@@ -7,3 +7,5 @@ yarn-error.log
 
 # TypeScript
 *.tsbuildinfo
+
+.vscode/

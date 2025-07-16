@@ -2,7 +2,9 @@
 
 ### 📄 Overview
 
-**bombLang** is an esoteric programming language built on explosive metaphors. Variables are bombs, functions are fuses, and calls are detonations. It focuses on minimal syntax, symbolic operations, and playful semantics. THERE ARE NO WHITESPACES in bomblang. 
+**bombLang** is an esoteric programming language built on explosive metaphors. Variables are bombs, functions are fuses, and calls are detonations. It focuses on minimal syntax, symbolic operations, and playful semantics. 
+
+**CRITICAL RULE: NO WHITESPACE ALLOWED** (except inside string literals). Any space, tab, carriage return, or newline characters outside of strings will cause a lexical error. This makes bombLang extremely compact and forces precise syntax. Code flows continuously like brainfuck.
 
 ---
 
@@ -10,15 +12,15 @@
 
 | Concept        | Syntax Example              | Description                                                 |
 | -------------- | --------------------------- | ----------------------------------------------------------- |
-| Variable       | `*5 @x`                     | Creates a bomb (value 5) named `x`                          |
-| Arithmetic     | `*x & + & y @z`             | Chains operations left-to-right                             |
-| Function       | `~add { ... }`              | Declares a function (fuse)                                  |
-| Function Call  | `!add x y @sum`             | Calls function `add` with args `x` and `y`, result in `sum` |
-| Conditional    | `:if { ... } :else { ... }` | Conditional blocks                                          |
-| Error Handling | `^label { ... }`            | Try block, with matching `^label { ... }` for catch         |
-| Return         | `!return val`               | Returns from a function                                     |
-| Output         | `!alert "msg"`              | Prints message                                              |
-| Comments       | `// This is a comment`      | Ignored by interpreter                                      |
+| Variable       | `*5@x`                      | Creates a bomb (value 5) named `x`                          |
+| Arithmetic     | `*x&+y&@z`                  | Chains operations: value of x + value of y → z              |
+| Function       | `~add-x-y_...code..._`      | Declares function `add` with parameters `x` and `y`         |
+| Function Call  | `!add-x-y@sum`              | Calls function `add` with args `x` and `y`, result in `sum` |
+| Conditional    | `*x&>5&:if_...code..._:else_...code..._`  | Conditional blocks based on preceding expression |
+| Error Handling | `^label_...try..._^label_...catch..._`    | Try block, with matching catch block        |
+| Return         | `!return-val`               | Returns value from a function                               |
+| Output         | `!alert-x-"msg"-y`          | Prints concatenated values/strings                          |
+| Comments       | `//Thisisacomment`          | Ignored by interpreter (no spaces in comments!)            |
 
 ---
 
@@ -34,88 +36,77 @@
 #### 🧨 Variable Declaration
 
 ```bomb
-*5 @x       // Assign literal 5 to variable x
-*x & + & *3 @y   // y = x + 3
+*5@x           // Assign literal 5 to variable x
+*x&+3&@y       // y = x + 3 (value of x, then literal 3)
 ```
 
 #### 🔁 Arithmetic Chains
 
 ```bomb
-*x & + & y @z     // z = x + y
-*z & *2 & *3 & + @w  // w = z * 2 + 3
+*x&+y&@z       // z = x + y (value of x + value of y)
+*z&*2&+3&@w    // w = z * 2 + 3 (value of z * literal 2 + literal 3)
 ```
 
+**Pattern**: `*` starts expression, `&` separates values/operations, literals come after `&`
 Supported operators: `+`, `-`, `*`, `/`, `%`, `==`, `!=`, `>`, `<`, `>=`, `<=`
 
 #### 🔩 Fuse (Function) Definition
 
 ```bomb
-~add {
-    *arg1 & + & arg2 @result
-    !return result
-}
+~add-x-y_*x&+y&@result!return-result_
+~multiply-a-b-c_*a&*b&*c&@result!return-result_
 ```
+
+**Pattern**: `~name-param1-param2-..._code_`
 
 #### 💥 Detonation (Function Call)
 
 ```bomb
-*4 @a
-*6 @b
-!add a b @sum   // Calls add(a, b), stores result in sum
+*4@a*6@b!add-a-b@sum   // Calls add(a,b), stores result in sum
+!multiply-2-3-4@product // Calls multiply with literals 2,3,4
 ```
+
+**Pattern**: `!funcname-arg1-arg2-...@resultvar` (optional @resultvar)
 
 #### ⏳ Conditionals
 
 ```bomb
-*z & > & *10 :if {
-    !alert "Too powerful!"
-} :else {
-    !alert "Safe."
-}
+*z&>10&:if_!alert-"Toopowerful!"_:else_!alert-"Safe."_
 ```
+
+**Pattern**: Expression followed by `:if_code_:else_code_` (else is optional)
 
 #### 🧯 Error Handling
 
 ```bomb
-^explode {
-    *0 & / & *0 @div
-} ^explode {
-    !alert "Explosion defused!"
-}
+^explode_*0&/0&@div_^explode_!alert-"Explosiondefused!"_
 ```
+
+**Pattern**: `^label_trycode_^label_catchcode_`
 
 ---
 
 ### 🔥 Special Commands
 
-| Command   | Purpose          |
-| --------- | ---------------- |
-| `!alert`  | Print to output  |
-| `!return` | Return from fuse |
+| Command   | Purpose          | Example |
+| --------- | ---------------- | ------- |
+| `!alert-args...`  | Print concatenated output  | `!alert-x-"sum:"-y` |
+| `!return-value` | Return from fuse | `!return-42` |
 
 ---
 
 ### 🧪 Sample Program
 
 ```bomb
-// Multiply two values and report if the result is too big
-
-*5 @x
-*7 @y
-
-~multiply {
-    *arg1 & *arg2 & *1 & *0 & + & + @result
-    !return result
-}
-
-!multiply x y @z
-
-*z & > & *30 :if {
-    !alert "Big boom!"
-} :else {
-    !alert "Controlled detonation."
-}
+//Multiplytwovauesandreportiftheresultistoobig
+*5@x*7@y~multiply-a-b_*a&*b&@result!return-result_!multiply-x-y@z*z&>30&:if_!alert-"Bigboom!"_:else_!alert-"Controlleddemotion."_
 ```
+
+**Breaking it down:**
+- `*5@x*7@y` - Set x=5, y=7
+- `~multiply-a-b_*a&*b&@result!return-result_` - Define multiply function
+- `!multiply-x-y@z` - Call multiply with x,y store in z
+- `*z&>30&:if_...` - If z > 30 then print "Bigboom!" else "Controlleddemotion."
 
 ---
 
