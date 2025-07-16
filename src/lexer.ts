@@ -39,18 +39,15 @@ export class Lexer {
   }
 
   private nextToken(): Token {
-    // No whitespace allowed at all (except in strings)
+    // Skip any whitespace characters silently
+    this.skipWhitespace();
+
     if (this.isAtEnd()) {
       return this.createToken(TokenType.EOF, "");
     }
 
     const char = this.current();
     
-    // Check for illegal whitespace characters (including newlines now)
-    if (this.isIllegalWhitespace(char)) {
-      throw new Error(`Illegal whitespace character '${char}' at line ${this.line}, column ${this.column}. bombLang forbids all whitespace except inside strings.`);
-    }
-
     const token = this.scanToken(char);
     if (token) {
       return token;
@@ -67,32 +64,42 @@ export class Lexer {
       case '~': return this.createToken(TokenType.Tilde, this.advance());
       case ':': return this.createToken(TokenType.Colon, this.advance());
       case '^': return this.createToken(TokenType.Caret, this.advance());
-      case '{': return this.createToken(TokenType.LBrace, this.advance());
-      case '}': return this.createToken(TokenType.RBrace, this.advance());
-      case '(': return this.createToken(TokenType.LParen, this.advance());
-      case ')': return this.createToken(TokenType.RParen, this.advance());
+      case '_': return this.createToken(TokenType.Underscore, this.advance());
       case '+': return this.createToken(TokenType.Plus, this.advance());
       case '-': return this.createToken(TokenType.Dash, this.advance());
       case '%': return this.createToken(TokenType.Percent, this.advance());
-      case '_': return this.createToken(TokenType.Underscore, this.advance());
       case '!':
-        if (this.match('=')) {
+        // Look ahead for !=
+        if (this.peek() === '=') {
+          this.advance(); // consume !
+          this.advance(); // consume =
           return this.createToken(TokenType.BangEqual, '!=');
         } else {
           return this.createToken(TokenType.Bang, this.advance());
         }
       case '=':
-        return this.match('=')
-          ? this.createToken(TokenType.EqualEqual, '==')
-          : null; // Single '=' is not a valid token
+        // Look ahead for ==
+        if (this.peek() === '=') {
+          this.advance(); // consume first =
+          this.advance(); // consume second =
+          return this.createToken(TokenType.EqualEqual, '==');
+        } else {
+          return null; // Single '=' is not a valid token
+        }
       case '>':
-        if (this.match('=')) {
+        // Look ahead for >=
+        if (this.peek() === '=') {
+          this.advance(); // consume >
+          this.advance(); // consume =
           return this.createToken(TokenType.GreaterEqual, '>=');
         } else {
           return this.createToken(TokenType.Greater, this.advance());
         }
       case '<':
-        if (this.match('=')) {
+        // Look ahead for <=
+        if (this.peek() === '=') {
+          this.advance(); // consume <
+          this.advance(); // consume =
           return this.createToken(TokenType.LessEqual, '<=');
         } else {
           return this.createToken(TokenType.Less, this.advance());
@@ -197,16 +204,16 @@ export class Lexer {
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.input[this.position] !== expected) return false;
-    this.position++;
-    this.column++;
+    // Check the next character, not the current one
+    if (this.position + 1 >= this.input.length) return false;
+    if (this.input[this.position + 1] !== expected) return false;
+    this.advance(); // Consume the next character
     return true;
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return '\0';
-    return this.input[this.position];
+    if (this.position + 1 >= this.input.length) return '\0';
+    return this.input[this.position + 1];
   }
 
   private current(): string {
@@ -222,6 +229,11 @@ export class Lexer {
     while (true) {
       const char = this.peek();
       switch (char) {
+        case ' ':
+        case '\r':
+        case '\t':
+          this.advance();
+          break;
         case '\n':
           this.line++;
           this.column = 1;
@@ -239,10 +251,6 @@ export class Lexer {
       this.column = 1;
       this.advance();
     }
-  }
-
-  private isIllegalWhitespace(char: string): boolean {
-    return char === ' ' || char === '\r' || char === '\t' || char === '\n';
   }
 
   private isDigit(char: string): boolean {

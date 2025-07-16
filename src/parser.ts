@@ -65,9 +65,15 @@ export class Parser {
   }
 
   // *expression @variable
-  private assignmentStatement(): AssignmentStmt {
+  private assignmentStatement(): AssignmentStmt | IfStmt {
     const expression = this.expression();
     this.lastExpression = expression; // Store for potential conditional use
+    
+    // Check if this is actually a conditional (expression followed by :if)
+    if (this.check(TokenType.Colon) && this.peekNext()?.type === TokenType.If) {
+      return this.ifStatement();
+    }
+    
     this.consume(TokenType.At, "Expected '@' after expression in assignment");
     const varName = this.consume(TokenType.Identifier, "Expected variable name after '@'");
     return new AssignmentStmt(expression, varName.value);
@@ -185,7 +191,7 @@ export class Parser {
     return this.chainExpression();
   }
 
-  // Handle chained expressions like *x&+y& or *x&+3&*y&
+  // Handle chained expressions like *x&+&y&+&z& or *5&+&3&*&2&
   private chainExpression(): ASTNode {
     let expr = this.primary();
     
@@ -196,12 +202,9 @@ export class Parser {
         const operator = this.advance().value;
         chain.push(new LiteralExpr(operator));
         
-        // Expect another value after operator
-        if (this.match(TokenType.Ampersand)) {
-          chain.push(this.primary());
-        } else {
-          throw new Error("Expected value after operator in chain");
-        }
+        // Expect another ampersand and then a value
+        this.consume(TokenType.Ampersand, "Expected '&' after operator in chain");
+        chain.push(this.primary());
       } else {
         throw new Error("Expected operator after '&'");
       }

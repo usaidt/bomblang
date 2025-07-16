@@ -1,27 +1,22 @@
 export enum TokenType {
-  // Symbols
-  Asterisk = "ASTERISK", // *
-  At = "AT", // @
-  Ampersand = "AMPERSAND", // &
-  Bang = "BANG", // !
-  Tilde = "TILDE", // ~
-  Colon = "COLON", // :
-  Caret = "CARET", // ^
-  LBrace = "LBRACE", // {
-  RBrace = "RBRACE", // }
-  LParen = "LPAREN", // (
-  RParen = "RPAREN", // )
-  Dash = "DASH", // -
-  Underscore = "UNDERSCORE", // _
+  // Core symbols needed for bombLang
+  Asterisk = "ASTERISK", // * - value reference and multiplication
+  At = "AT", // @ - variable assignment
+  Ampersand = "AMPERSAND", // & - chain separator
+  Bang = "BANG", // ! - function call/commands
+  Tilde = "TILDE", // ~ - function definition
+  Colon = "COLON", // : - conditionals
+  Caret = "CARET", // ^ - error handling
+  Dash = "DASH", // - - parameter separator and subtraction
+  Underscore = "UNDERSCORE", // _ - block delimiters
 
   // Literals
   Number = "NUMBER",
-  String = "STRING",
+  String = "STRING", 
   Identifier = "IDENTIFIER",
 
-  // Operators
+  // Operators (used in chains)
   Plus = "PLUS", // +
-  Minus = "MINUS", // -
   Slash = "SLASH", // /
   Percent = "PERCENT", // %
   EqualEqual = "EQUAL_EQUAL", // ==
@@ -33,7 +28,7 @@ export enum TokenType {
 
   // Keywords
   If = "IF",
-  Else = "ELSE",
+  Else = "ELSE", 
   Return = "RETURN",
   Alert = "ALERT",
 

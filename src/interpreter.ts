@@ -87,6 +87,13 @@ export class Interpreter implements ASTVisitor<any> {
     if (stmt.name === 'alert') {
       throw new Error("Alert should be handled as AlertStmt");
     }
+    
+    // Handle built-in explode command for testing error handling
+    if (stmt.name === 'explode') {
+      const label = stmt.args.length > 0 ? String(stmt.args[0].accept(this)) : undefined;
+      const message = stmt.args.length > 1 ? String(stmt.args[1].accept(this)) : "Manual explosion!";
+      throw new BombLangError(message, label);
+    }
 
     // Handle user-defined functions
     const func = this.functions.get(stmt.name);
@@ -94,13 +101,17 @@ export class Interpreter implements ASTVisitor<any> {
       throw new BombLangError(`Unknown function: ${stmt.name}`);
     }
 
+    // Evaluate arguments in the current scope BEFORE creating new frame
+    const argValues = stmt.args.map(arg => arg.accept(this));
+
     // Create new scope for function
     this.pushFrame();
     
+    let functionResult = 0;
+    
     try {
-      // Set up parameters
-      stmt.args.forEach((arg, index) => {
-        const argValue = arg.accept(this); // Evaluate the argument expression
+      // Set up parameters using pre-evaluated values
+      argValues.forEach((argValue, index) => {
         if (index < func.params.length) {
           this.setVariable(func.params[index], argValue);
         }
@@ -110,25 +121,24 @@ export class Interpreter implements ASTVisitor<any> {
       func.body.accept(this);
 
       // If we get here without a return, return 0
-      let result = 0;
-      
-      if (stmt.resultVar) {
-        this.setVariable(stmt.resultVar, result);
-      }
-      
-      return result;
+      functionResult = 0;
     } catch (error) {
       if (error instanceof ReturnValue) {
-        const result = error.value;
-        if (stmt.resultVar) {
-          this.setVariable(stmt.resultVar, result);
-        }
-        return result;
+        functionResult = error.value;
+      } else {
+        throw error;
       }
-      throw error;
     } finally {
+      // Pop frame first to get back to calling scope
       this.popFrame();
     }
+    
+    // Now we're back in the calling scope, set the result variable if specified
+    if (stmt.resultVar) {
+      this.setVariable(stmt.resultVar, functionResult);
+    }
+    
+    return functionResult;
   }
 
   visitReturnStmt(stmt: ReturnStmt): any {
@@ -157,13 +167,24 @@ export class Interpreter implements ASTVisitor<any> {
     try {
       stmt.tryBlock.accept(this);
     } catch (error) {
-      if (error instanceof BombLangError && error.label === stmt.label) {
-        stmt.catchBlock.accept(this);
-      } else if (error instanceof BombLangError) {
-        // Re-throw labeled errors with different labels
+      if (error instanceof BombLangError) {
+        // If the error has a label, only catch it if it matches
+        if (error.label) {
+          if (error.label === stmt.label) {
+            stmt.catchBlock.accept(this);
+          } else {
+            // Re-throw labeled errors with different labels
+            throw error;
+          }
+        } else {
+          // Catch unlabeled bombLang errors
+          stmt.catchBlock.accept(this);
+        }
+      } else if (error instanceof ReturnValue) {
+        // Don't catch return statements
         throw error;
       } else {
-        // Catch any other errors
+        // Catch any other runtime errors
         stmt.catchBlock.accept(this);
       }
     }
@@ -207,43 +228,71 @@ export class Interpreter implements ASTVisitor<any> {
       return 0;
     }
 
+    if (expr.expressions.length === 1) {
+      return expr.expressions[0].accept(this);
+    }
+
+    // Process chain: value op value op value...
     let result = expr.expressions[0].accept(this);
     
-    // Process chain left-to-right: value op value op value...
     for (let i = 1; i < expr.expressions.length; i += 2) {
-      if (i + 1 >= expr.expressions.length) break;
+      if (i + 1 >= expr.expressions.length) {
+        throw new BombLangError("Incomplete chain expression - missing operand");
+      }
       
       const operator = expr.expressions[i].accept(this); // Should be operator literal
       const rightValue = expr.expressions[i + 1].accept(this);
       
-      // Create temporary binary expression
-      const binaryExpr = new BinaryExpr(
-        new LiteralExpr(result),
-        String(operator),
-        new LiteralExpr(rightValue)
-      );
-      
-      result = this.visitBinaryExpr(binaryExpr);
+      // Apply the operation
+      switch (String(operator)) {
+        case '+': result = Number(result) + Number(rightValue); break;
+        case '-': result = Number(result) - Number(rightValue); break;
+        case '*': result = Number(result) * Number(rightValue); break;
+        case '/': 
+          if (Number(rightValue) === 0) {
+            throw new BombLangError("Division by zero explosion!");
+          }
+          result = Math.floor(Number(result) / Number(rightValue)); 
+          break;
+        case '%': result = Number(result) % Number(rightValue); break;
+        case '==': result = Number(result) === Number(rightValue) ? 1 : 0; break;
+        case '!=': result = Number(result) !== Number(rightValue) ? 1 : 0; break;
+        case '>': result = Number(result) > Number(rightValue) ? 1 : 0; break;
+        case '>=': result = Number(result) >= Number(rightValue) ? 1 : 0; break;
+        case '<': result = Number(result) < Number(rightValue) ? 1 : 0; break;
+        case '<=': result = Number(result) <= Number(rightValue) ? 1 : 0; break;
+        default:
+          throw new BombLangError(`Unknown operator in chain: ${operator}`);
+      }
     }
     
     return result;
   }
 
   private pushFrame(): void {
+    // Save current locals on the stack
     this.callStack.push({
       vars: new Map(this.locals)
     });
-    this.locals.clear();
+    // Clear locals for new function scope
+    this.locals = new Map();
   }
 
   private popFrame(): void {
     const frame = this.callStack.pop();
     if (frame) {
+      // Restore previous local scope
       this.locals = frame.vars;
+    } else {
+      // No frame to restore, clear locals (back to global scope)
+      this.locals = new Map();
     }
   }
 
   private setVariable(name: string, value: any): void {
+    // Always set variables in the current scope
+    // If we're in a function (callStack.length > 0), use locals
+    // Otherwise use globals
     if (this.callStack.length > 0) {
       this.locals.set(name, value);
     } else {
@@ -252,8 +301,8 @@ export class Interpreter implements ASTVisitor<any> {
   }
 
   private getVariable(name: string): any {
-    // Check locals first, then globals
-    if (this.locals.has(name)) {
+    // Check locals first (if we're in a function), then globals
+    if (this.callStack.length > 0 && this.locals.has(name)) {
       return this.locals.get(name);
     }
     
